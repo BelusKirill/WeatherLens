@@ -1,0 +1,81 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Expo / Metro
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native builds
+ios/Pods/
+ios/build/
+android/.gradle/
+android/build/
+android/app/build/
+*.jks
+*.keystore
+!debug.keystore
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.pem
+google-services.json
+GoogleService-Info.plist
+
+# Logs & debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# OS / IDE (generic)
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Tests / coverage
+coverage/
+.jest/
+
+# TypeScript
+*.tsbuildinfo
+
+# --- Private / local-only (not for public portfolio) ---
+# Cursor agent config, rules, skills
+.cursor/
+.cursorrules
+AGENTS.md
+
+# Business & management plans
+bm/
+
+# Local notes, drafts, scratch
+.local/
+*.local.md
+TODO.local.md
+NOTES.local.md
+
+# Agent / AI session artifacts
+.agent/
+.claude/
+.codex/
+.continue/
+.windsurf/
+.aider*
+
+# Misc tooling caches
+.turbo/
+.cache/
+tmp/
+temp/

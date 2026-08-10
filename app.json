@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "WeatherLens",
+    "slug": "weatherlens",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B1F33"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.portfolio.weatherlens",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "WeatherLens uses your location to show local weather and place a pin on the map."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0B1F33"
+      },
+      "package": "com.portfolio.weatherlens",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow WeatherLens to use your location for local weather and map pinning."
+        }
+      ]
+    ]
+  }
+}

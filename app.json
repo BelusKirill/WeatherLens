@@ -35,7 +35,9 @@
         {
           "locationWhenInUsePermission": "Allow WeatherLens to use your location for local weather and map pinning."
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font"
     ]
   }
 }

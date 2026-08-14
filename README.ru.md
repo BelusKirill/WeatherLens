@@ -57,6 +57,17 @@ npm start
 
 Нужен API-ключ [OpenWeather](https://openweathermap.org/api).
 
+### Run targets
+
+| Target | How |
+|--------|-----|
+| **Android emulator (primary)** | Запустить AVD, затем `npm start` → `a` (или `npm run android`) |
+| **Physical device** | Expo Go, одна Wi‑Fi с ПК, `npm start` → QR (`npx expo start --tunnel`, если LAN не видит) |
+| **Web (UI shell only)** | `npm run web` — превью навигации/темы; карта и геолокация ограничены |
+| **iOS Simulator** | Нужен macOS — planned |
+
+Expo Fast Refresh обновляет приложение при правках в `src/`.
+
 ## Roadmap
 
 [ROADMAP](docs/ru/ROADMAP.md) · [EN](docs/ROADMAP.md)

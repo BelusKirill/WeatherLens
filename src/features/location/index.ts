@@ -1,2 +1,11 @@
-/** Geolocation + permission helpers — implement in Phase 1/2. */
-export {};
+export {
+  getCurrentPosition,
+  getForegroundPermissionStatus,
+  openAppSettings,
+  requestForegroundPermissions,
+} from './lib/getCurrentLocation';
+export type {
+  Coords,
+  CurrentPositionResult,
+  LocationPermissionStatus,
+} from './model/types';

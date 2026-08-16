@@ -9,7 +9,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/core/http/errors.test.ts src/features/weather/api/mappers.test.ts src/features/weather/model/errorMessage.test.ts"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
@@ -39,6 +40,7 @@
     "@babel/core": "^7.26.0",
     "@types/react": "~18.3.12",
     "babel-plugin-module-resolver": "^5.0.2",
+    "tsx": "^4.19.3",
     "typescript": "~5.3.3"
   }
 }

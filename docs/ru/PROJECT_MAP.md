@@ -34,11 +34,11 @@ WeatherLens/
 
 | Фича | Ответственность | Публичный экспорт |
 |------|-----------------|-------------------|
-| `weather` | Текущий/почасовой прогноз, единицы | `TodayScreen`, `useWeatherStore` |
+| `weather` | Текущий/почасовой прогноз, единицы, Lottie | `TodayScreen`, `useWeatherStore` |
 | `map` | Карта, drag pin, выбор координат | `MapScreen` |
 | `favorites` | Persist сохранённых мест | `FavoritesScreen`, `useFavoritesStore` |
 | `compare` | Сравнение двух городов | `CompareScreen` |
-| `location` | Geo permissions и текущая позиция | helpers (Phase 1+) |
+| `location` | Geo permissions и текущая позиция | `getCurrentPosition`, `openAppSettings` |
 | `widget` | Мост к виджету home screen | Phase 4 |
 
 ## Core

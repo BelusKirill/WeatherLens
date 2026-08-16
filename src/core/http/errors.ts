@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export class NetworkError extends Error {
   constructor(message = 'Network unavailable') {
     super(message);
@@ -16,11 +18,15 @@ export class ApiError extends Error {
 }
 
 export function toAppError(error: unknown): Error {
-  if (axiosIsNetwork(error)) {
-    return new NetworkError();
+  if (axios.isCancel(error)) {
+    return error instanceof Error ? error : new Error('Request canceled');
   }
 
-  if (axiosIsHttp(error)) {
+  if (axios.isAxiosError(error)) {
+    if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+      return new NetworkError();
+    }
+
     const status = error.response?.status;
     const message =
       (error.response?.data as { message?: string } | undefined)?.message ??
@@ -35,22 +41,6 @@ export function toAppError(error: unknown): Error {
   return new Error('Unknown error');
 }
 
-function axiosIsNetwork(error: unknown): boolean {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'isAxiosError' in error &&
-    (error as { code?: string }).code === 'ERR_NETWORK'
-  );
-}
-
-function axiosIsHttp(
-  error: unknown,
-): error is { response?: { status?: number; data?: unknown } } {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'isAxiosError' in error &&
-    'response' in error
-  );
+export function isCanceledError(error: unknown): boolean {
+  return axios.isCancel(error);
 }

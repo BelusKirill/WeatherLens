@@ -1,2 +1,2 @@
 export { http } from './client';
-export { ApiError, NetworkError, toAppError } from './errors';
+export { ApiError, isCanceledError, NetworkError, toAppError } from './errors';

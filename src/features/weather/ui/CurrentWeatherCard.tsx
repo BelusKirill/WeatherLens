@@ -3,16 +3,22 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useAppTheme } from '@/core/theme';
 
 import type { CurrentWeather, TemperatureUnit } from '../model/types';
+import {
+  convertWindMs,
+  formatTempC,
+  windSpeedLabel,
+} from '../model/units';
 import { WeatherIcon } from './WeatherIcon';
 
 type CurrentWeatherCardProps = {
+  /** Metric payload from the store. */
   weather: CurrentWeather;
   unit: TemperatureUnit;
 };
 
 export function CurrentWeatherCard({ weather, unit }: CurrentWeatherCardProps) {
   const theme = useAppTheme();
-  const speedUnit = unit === 'metric' ? 'm/s' : 'mph';
+  const wind = convertWindMs(weather.windSpeed, unit);
 
   return (
     <View
@@ -39,20 +45,20 @@ export function CurrentWeatherCard({ weather, unit }: CurrentWeatherCardProps) {
       </View>
 
       <Text style={[styles.temp, { color: theme.colors.text }]}>
-        {Math.round(weather.temp)}°
+        {formatTempC(weather.temp, unit)}
       </Text>
       <Text style={[styles.description, { color: theme.colors.textMuted }]}>
         {capitalize(weather.description)}
       </Text>
       <Text style={{ color: theme.colors.textMuted, marginTop: 4 }}>
-        Feels like {Math.round(weather.feelsLike)}°
+        Feels like {formatTempC(weather.feelsLike, unit)}
       </Text>
 
       <View style={styles.metaRow}>
         <Meta label="Humidity" value={`${weather.humidity}%`} />
         <Meta
           label="Wind"
-          value={`${weather.windSpeed.toFixed(1)} ${speedUnit}`}
+          value={`${wind.toFixed(1)} ${windSpeedLabel(unit)}`}
         />
       </View>
     </View>

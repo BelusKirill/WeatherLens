@@ -6,17 +6,24 @@ import { resolveWeatherLottie } from './lottieMap';
 type WeatherIconProps = {
   iconCode: string;
   size?: number;
+  /** Hourly strip should stay static to avoid N looping animations. */
+  animated?: boolean;
 };
 
-export function WeatherIcon({ iconCode, size = 72 }: WeatherIconProps) {
+export function WeatherIcon({
+  iconCode,
+  size = 72,
+  animated = true,
+}: WeatherIconProps) {
   const source = resolveWeatherLottie(iconCode);
 
   return (
     <View style={{ width: size, height: size }}>
       <LottieView
         source={source}
-        autoPlay
-        loop
+        autoPlay={animated}
+        loop={animated}
+        progress={animated ? undefined : 0}
         style={styles.lottie}
       />
     </View>

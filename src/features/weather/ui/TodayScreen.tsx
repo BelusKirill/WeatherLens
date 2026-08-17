@@ -17,6 +17,12 @@ import { CurrentWeatherCard } from './CurrentWeatherCard';
 import { HourlyStrip } from './HourlyStrip';
 import { UnitToggle } from './UnitToggle';
 
+type Action = {
+  label: string;
+  onPress: () => void;
+  muted?: boolean;
+};
+
 export function TodayScreen() {
   const theme = useAppTheme();
   const {
@@ -29,9 +35,17 @@ export function TodayScreen() {
     emptyReason,
     toggleUnit,
     retry,
-    loadFromDevice,
-    loadDemo,
+    bootstrapFromDevice,
+    loadDemoLondon,
+    hasHydratedUnit,
   } = useTodayWeather();
+
+  const reloadFromDevice = () => {
+    void bootstrapFromDevice({ force: true });
+  };
+  const loadDemo = () => {
+    void loadDemoLondon();
+  };
 
   if (!isApiKeyConfigured()) {
     return (
@@ -44,11 +58,7 @@ export function TodayScreen() {
     );
   }
 
-  // Only a real in-flight load shows the full-screen spinner.
-  // Never treat idle as loading — that caused an infinite spinner after aborted boots.
-  const bootstrapping = status === 'loading' && !current;
-
-  if (bootstrapping) {
+  if (!hasHydratedUnit || (status === 'loading' && !current)) {
     return (
       <Screen>
         <View style={styles.centered}>
@@ -65,6 +75,17 @@ export function TodayScreen() {
     const needsSettings =
       emptyReason === 'denied' || emptyReason === 'services_off';
 
+    const actions: Action[] = needsSettings
+      ? [
+          { label: 'Open settings', onPress: () => void openAppSettings() },
+          { label: 'Try again', onPress: reloadFromDevice, muted: true },
+          { label: 'Try demo (London)', onPress: loadDemo, muted: true },
+        ]
+      : [
+          { label: 'Try again', onPress: reloadFromDevice },
+          { label: 'Try demo (London)', onPress: loadDemo, muted: true },
+        ];
+
     return (
       <Screen>
         <View style={styles.centered}>
@@ -75,37 +96,7 @@ export function TodayScreen() {
               'Allow location access to show weather for your area.'
             }
           />
-          <View style={styles.actions}>
-            {needsSettings ? (
-              <ActionButton
-                label="Open settings"
-                onPress={() => {
-                  void openAppSettings();
-                }}
-              />
-            ) : (
-              <ActionButton
-                label="Allow location"
-                onPress={() => {
-                  void loadFromDevice();
-                }}
-              />
-            )}
-            <ActionButton
-              label="Try again"
-              onPress={() => {
-                void loadFromDevice();
-              }}
-              muted
-            />
-            <ActionButton
-              label="Try demo (London)"
-              onPress={() => {
-                void loadDemo();
-              }}
-              muted
-            />
-          </View>
+          <ActionList actions={actions} />
         </View>
       </Screen>
     );
@@ -119,21 +110,12 @@ export function TodayScreen() {
             title="Couldn’t load weather"
             subtitle={errorMessage ?? 'Something went wrong.'}
           />
-          <View style={styles.actions}>
-            <ActionButton
-              label="Retry"
-              onPress={() => {
-                void retry();
-              }}
-            />
-            <ActionButton
-              label="Try demo (London)"
-              onPress={() => {
-                void loadDemo();
-              }}
-              muted
-            />
-          </View>
+          <ActionList
+            actions={[
+              { label: 'Retry', onPress: () => void retry() },
+              { label: 'Try demo (London)', onPress: loadDemo, muted: true },
+            ]}
+          />
         </View>
       </Screen>
     );
@@ -147,21 +129,12 @@ export function TodayScreen() {
             title="Today"
             subtitle="No weather data yet. Allow location or try the demo city."
           />
-          <View style={styles.actions}>
-            <ActionButton
-              label="Allow location"
-              onPress={() => {
-                void loadFromDevice();
-              }}
-            />
-            <ActionButton
-              label="Try demo (London)"
-              onPress={() => {
-                void loadDemo();
-              }}
-              muted
-            />
-          </View>
+          <ActionList
+            actions={[
+              { label: 'Allow location', onPress: reloadFromDevice },
+              { label: 'Try demo (London)', onPress: loadDemo, muted: true },
+            ]}
+          />
         </View>
       </Screen>
     );
@@ -172,6 +145,7 @@ export function TodayScreen() {
   return (
     <Screen padded={false}>
       <ScrollView
+        nestedScrollEnabled
         contentContainerStyle={[
           styles.content,
           { padding: theme.spacing.md },
@@ -188,9 +162,7 @@ export function TodayScreen() {
             <UnitToggle
               unit={unit}
               disabled={refreshing}
-              onToggle={() => {
-                void toggleUnit();
-              }}
+              onToggle={toggleUnit}
             />
           </View>
         </View>
@@ -200,21 +172,23 @@ export function TodayScreen() {
         ) : null}
 
         <CurrentWeatherCard weather={current} unit={unit} />
-        <HourlyStrip points={hourly} />
+        <HourlyStrip points={hourly} unit={unit} />
       </ScrollView>
     </Screen>
   );
 }
 
-function ActionButton({
-  label,
-  onPress,
-  muted,
-}: {
-  label: string;
-  onPress: () => void;
-  muted?: boolean;
-}) {
+function ActionList({ actions }: { actions: Action[] }) {
+  return (
+    <View style={styles.actions}>
+      {actions.map((action) => (
+        <ActionButton key={action.label} {...action} />
+      ))}
+    </View>
+  );
+}
+
+function ActionButton({ label, onPress, muted }: Action) {
   const theme = useAppTheme();
 
   return (

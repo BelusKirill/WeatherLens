@@ -10,9 +10,13 @@ type UnitToggleProps = {
   disabled?: boolean;
 };
 
+const OPTIONS: Array<{ id: TemperatureUnit; label: string }> = [
+  { id: 'metric', label: '°C' },
+  { id: 'imperial', label: '°F' },
+];
+
 export function UnitToggle({ unit, onToggle, disabled }: UnitToggleProps) {
   const theme = useAppTheme();
-  const isMetric = unit === 'metric';
 
   return (
     <View
@@ -24,52 +28,33 @@ export function UnitToggle({ unit, onToggle, disabled }: UnitToggleProps) {
         },
       ]}
     >
-      <Pressable
-        accessibilityRole="button"
-        accessibilityState={{ selected: isMetric, disabled }}
-        disabled={disabled}
-        onPress={() => {
-          if (!isMetric) {
-            onToggle();
-          }
-        }}
-        style={[
-          styles.chip,
-          isMetric && { backgroundColor: theme.colors.accent },
-        ]}
-      >
-        <Text
-          style={[
-            styles.label,
-            { color: isMetric ? '#FFFFFF' : theme.colors.textMuted },
-          ]}
-        >
-          °C
-        </Text>
-      </Pressable>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityState={{ selected: !isMetric, disabled }}
-        disabled={disabled}
-        onPress={() => {
-          if (isMetric) {
-            onToggle();
-          }
-        }}
-        style={[
-          styles.chip,
-          !isMetric && { backgroundColor: theme.colors.accent },
-        ]}
-      >
-        <Text
-          style={[
-            styles.label,
-            { color: !isMetric ? '#FFFFFF' : theme.colors.textMuted },
-          ]}
-        >
-          °F
-        </Text>
-      </Pressable>
+      {OPTIONS.map((option) => {
+        const selected = unit === option.id;
+        return (
+          <Pressable
+            key={option.id}
+            accessibilityRole="button"
+            accessibilityState={{ selected, disabled }}
+            disabled={disabled || selected}
+            onPress={onToggle}
+            style={[
+              styles.chip,
+              selected && { backgroundColor: theme.colors.accent },
+            ]}
+          >
+            <Text
+              style={[
+                styles.label,
+                {
+                  color: selected ? '#FFFFFF' : theme.colors.textMuted,
+                },
+              ]}
+            >
+              {option.label}
+            </Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }

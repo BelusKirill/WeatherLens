@@ -2,15 +2,17 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useAppTheme } from '@/core/theme';
 
-import type { HourlyPoint } from '../model/types';
+import type { HourlyPoint, TemperatureUnit } from '../model/types';
+import { formatTempC } from '../model/units';
 import { WeatherIcon } from './WeatherIcon';
 
 type HourlyStripProps = {
   points: HourlyPoint[];
+  unit: TemperatureUnit;
 };
 
 /** OpenWeather 5-day endpoint returns 3-hour steps — label honestly. */
-export function HourlyStrip({ points }: HourlyStripProps) {
+export function HourlyStrip({ points, unit }: HourlyStripProps) {
   const theme = useAppTheme();
 
   if (points.length === 0) {
@@ -27,6 +29,7 @@ export function HourlyStrip({ points }: HourlyStripProps) {
       </Text>
       <ScrollView
         horizontal
+        nestedScrollEnabled
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.list}
       >
@@ -44,9 +47,9 @@ export function HourlyStrip({ points }: HourlyStripProps) {
             <Text style={{ color: theme.colors.textMuted, fontSize: 13 }}>
               {formatHour(item.at)}
             </Text>
-            <WeatherIcon iconCode={item.iconCode} size={40} />
+            <WeatherIcon iconCode={item.iconCode} size={40} animated={false} />
             <Text style={{ color: theme.colors.text, fontWeight: '600' }}>
-              {Math.round(item.temp)}°
+              {formatTempC(item.temp, unit)}
             </Text>
           </View>
         ))}

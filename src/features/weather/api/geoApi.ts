@@ -1,3 +1,7 @@
+/**
+ * Geocoding helpers for Phase 2 (map / city search).
+ * @internal Not wired to UI in Phase 1 — do not call from Today.
+ */
 import { http } from '@/core/http';
 
 import type { WeatherLocation } from '../model/types';

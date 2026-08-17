@@ -1,40 +1,54 @@
 import { useCallback, useEffect } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 import { useWeatherStore } from './weatherStore';
 
 export function useTodayWeather() {
-  const status = useWeatherStore((s) => s.status);
-  const current = useWeatherStore((s) => s.current);
-  const hourly = useWeatherStore((s) => s.hourly);
-  const unit = useWeatherStore((s) => s.unit);
-  const errorMessage = useWeatherStore((s) => s.errorMessage);
-  const emptyMessage = useWeatherStore((s) => s.emptyMessage);
-  const emptyReason = useWeatherStore((s) => s.emptyReason);
-  const toggleUnit = useWeatherStore((s) => s.toggleUnit);
-  const bootstrapFromDevice = useWeatherStore((s) => s.bootstrapFromDevice);
-  const loadDemoLondon = useWeatherStore((s) => s.loadDemoLondon);
-  const loadWeather = useWeatherStore((s) => s.loadWeather);
-
-  const loadFromDevice = useCallback(() => {
-    return bootstrapFromDevice();
-  }, [bootstrapFromDevice]);
-
-  const loadDemo = useCallback(() => {
-    return loadDemoLondon();
-  }, [loadDemoLondon]);
+  const {
+    status,
+    current,
+    hourly,
+    unit,
+    errorMessage,
+    emptyMessage,
+    emptyReason,
+    toggleUnit,
+    bootstrapFromDevice,
+    loadDemoLondon,
+    loadWeather,
+    hasHydratedUnit,
+  } = useWeatherStore(
+    useShallow((s) => ({
+      status: s.status,
+      current: s.current,
+      hourly: s.hourly,
+      unit: s.unit,
+      errorMessage: s.errorMessage,
+      emptyMessage: s.emptyMessage,
+      emptyReason: s.emptyReason,
+      toggleUnit: s.toggleUnit,
+      bootstrapFromDevice: s.bootstrapFromDevice,
+      loadDemoLondon: s.loadDemoLondon,
+      loadWeather: s.loadWeather,
+      hasHydratedUnit: s.hasHydratedUnit,
+    })),
+  );
 
   const retry = useCallback(async () => {
     const loc = useWeatherStore.getState().selectedLocation;
     if (loc) {
-      await loadWeather({ lat: loc.lat, lon: loc.lon, name: loc.name });
+      await loadWeather({
+        lat: loc.lat,
+        lon: loc.lon,
+        name: loc.name,
+        force: true,
+      });
       return;
     }
-    await bootstrapFromDevice();
+    await bootstrapFromDevice({ force: true });
   }, [bootstrapFromDevice, loadWeather]);
 
   useEffect(() => {
-    // No abort-on-unmount: Strict Mode was canceling the first request, leaving
-    // status=idle and a forever spinner, then firing a second burst of API calls.
     void bootstrapFromDevice();
   }, [bootstrapFromDevice]);
 
@@ -48,7 +62,8 @@ export function useTodayWeather() {
     emptyReason,
     toggleUnit,
     retry,
-    loadFromDevice,
-    loadDemo,
+    bootstrapFromDevice,
+    loadDemoLondon,
+    hasHydratedUnit,
   };
 }

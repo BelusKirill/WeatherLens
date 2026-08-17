@@ -1,5 +1,9 @@
 export type TemperatureUnit = 'metric' | 'imperial';
 
+/**
+ * Domain weather values are always stored in metric (°C, m/s).
+ * Convert at the UI boundary via `units.ts` using the user's display `unit`.
+ */
 export type WeatherLocation = {
   id: string;
   name: string;

@@ -1,0 +1,40 @@
+/**
+ * Geocoding helpers for Phase 2 (map / city search).
+ * @internal Not wired to UI in Phase 1 — do not call from Today.
+ */
+import { http } from '@/core/http';
+
+import type { WeatherLocation } from '../model/types';
+import type { GeoPlaceDto } from './dto';
+import { mapGeoPlaceToLocation } from './mappers';
+
+export async function searchPlaces(
+  query: string,
+  options?: { limit?: number; signal?: AbortSignal },
+): Promise<WeatherLocation[]> {
+  const q = query.trim();
+  if (!q) {
+    return [];
+  }
+
+  const { data } = await http.get<GeoPlaceDto[]>('/geo/1.0/direct', {
+    params: { q, limit: options?.limit ?? 5 },
+    signal: options?.signal,
+  });
+
+  return data.map(mapGeoPlaceToLocation);
+}
+
+export async function reverseGeocode(
+  lat: number,
+  lon: number,
+  options?: { signal?: AbortSignal },
+): Promise<WeatherLocation | null> {
+  const { data } = await http.get<GeoPlaceDto[]>('/geo/1.0/reverse', {
+    params: { lat, lon, limit: 1 },
+    signal: options?.signal,
+  });
+
+  const place = data[0];
+  return place ? mapGeoPlaceToLocation(place) : null;
+}

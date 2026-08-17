@@ -2,16 +2,16 @@
 
 [English](README.md) | **Русский**
 
-Мобильное приложение погоды для исследования мира на карте — не только проверка текущего города.
-
-Поставьте пин в любом месте, сохраните избранное, сравните два города side-by-side и просмотрите анимированный почасовой прогноз. Портфолио-продукт: карты, геолокация, REST и аккуратный React Native UI.
+Мобильное приложение погоды как портфолио-продукт: живой экран Today через OpenWeather, геолокация и feature-first архитектура на React Native. Пин на карте, избранное, compare и виджет домашнего экрана — в roadmap.
 
 ## Highlights
 
-- **Interactive map** — перетащите пин, чтобы загрузить погоду по координатам
-- **Hourly forecast** — кастомные анимированные иконки погоды
-- **City compare** — две локации на одном экране
-- **Favorites** — быстрый доступ к сохранённым местам
+- **Today forecast** — текущие условия, полоска каждые 3 часа, °C/°F, UX loading/error/empty
+- **Animated icons** — Lottie-состояния clear / clouds / rain
+- **Location flow** — permissions, переход в настройки и demo-город как fallback
+- **Interactive map** — перетащите пин для любых координат (next)
+- **City compare** — две локации на одном экране (planned)
+- **Favorites** — сохранённые места (planned)
 - **Home-screen widget** — погода с первого взгляда (planned)
 
 ## Stack
@@ -41,10 +41,10 @@ Other language: [docs/](docs/)
 ## Skills demonstrated
 
 - REST-клиенты, async-потоки и устойчивый error/loading UX
-- Геолокация, permissions и взаимодействие через карту
+- Геолокация, permissions и восстановление через системные настройки
 - Feature-first архитектура, которую легко расширять
-- Кроссплатформенный UI с темой и готовностью к анимациям
-- Продуктовое мышление: compare, favorites и widget как дифференциаторы
+- Кроссплатформенный UI с темой и Lottie-анимацией
+- Продуктовый roadmap: map pin, compare, favorites и widget как дифференциаторы
 
 ## Getting started
 

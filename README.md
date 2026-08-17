@@ -2,16 +2,16 @@
 
 **English** | [Русский](README.ru.md)
 
-Mobile weather app for exploring the world on a map — not just checking your current city.
-
-Pin any place, save favorites, compare two cities side-by-side, and browse an animated hourly forecast. Built as a portfolio product showcasing maps, geolocation, REST, and polished React Native UI.
+Mobile weather app built as a portfolio product: live Today forecast from OpenWeather, geolocation, and a feature-first React Native architecture. Map pin, favorites, compare, and a home-screen widget are on the roadmap.
 
 ## Highlights
 
-- **Interactive map** — drag a pin to load weather for any coordinates
-- **Hourly forecast** — custom animated weather icons
-- **City compare** — two locations, one screen
-- **Favorites** — quick access to saved places
+- **Today forecast** — live current conditions, 3-hour strip, °C/°F, loading/error/empty UX
+- **Animated icons** — Lottie states for clear / clouds / rain
+- **Location flow** — permission handling with settings deep link and a demo city fallback
+- **Interactive map** — drag a pin for any coordinates (next)
+- **City compare** — two locations, one screen (planned)
+- **Favorites** — saved places (planned)
 - **Home-screen widget** — glanceable conditions (planned)
 
 ## Stack
@@ -41,10 +41,10 @@ Other language: [docs/ru/](docs/ru/)
 ## Skills demonstrated
 
 - REST clients, async flows, and resilient error/loading UX
-- Geolocation permissions and map-driven interaction
+- Geolocation permissions and graceful denial / settings recovery
 - Feature-first architecture that stays easy to extend
-- Cross-platform UI with theming and motion-ready setup
-- Product thinking: compare, favorites, and widget as differentiators
+- Cross-platform UI with theming and Lottie motion
+- Product roadmap: map pin, compare, favorites, and widget as differentiators
 
 ## Getting started
 

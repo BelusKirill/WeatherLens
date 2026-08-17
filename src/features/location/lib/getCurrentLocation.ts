@@ -7,6 +7,9 @@ import type {
   LocationPermissionStatus,
 } from '../model/types';
 
+/** Fail closed if the OS never returns a fix (avoids eternal Today spinner). */
+const GPS_TIMEOUT_MS = 10_000;
+
 export async function getForegroundPermissionStatus(): Promise<LocationPermissionStatus> {
   const { status } = await Location.getForegroundPermissionsAsync();
   return mapPermissionStatus(status);
@@ -43,9 +46,12 @@ export async function getCurrentPosition(): Promise<CurrentPositionResult> {
   }
 
   try {
-    const position = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Balanced,
-    });
+    const position = await withTimeout(
+      Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      }),
+      GPS_TIMEOUT_MS,
+    );
 
     const coords: Coords = {
       lat: position.coords.latitude,
@@ -53,7 +59,16 @@ export async function getCurrentPosition(): Promise<CurrentPositionResult> {
     };
 
     return { ok: true, coords };
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.message === 'location_timeout') {
+      return {
+        ok: false,
+        reason: 'timeout',
+        message:
+          'Locating timed out. Move to an open area, check GPS, or try the demo city.',
+      };
+    }
+
     return {
       ok: false,
       reason: 'unavailable',
@@ -65,6 +80,25 @@ export async function getCurrentPosition(): Promise<CurrentPositionResult> {
 /** Opens OS app settings so the user can re-enable a permanently denied permission. */
 export async function openAppSettings(): Promise<void> {
   await Linking.openSettings();
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error('location_timeout'));
+    }, ms);
+
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error: unknown) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
 }
 
 function mapPermissionStatus(

@@ -9,6 +9,7 @@ import {
 
 import { isApiKeyConfigured } from '@/core/config';
 import { useAppTheme } from '@/core/theme';
+import { FavoriteToggle } from '@/features/favorites';
 import { openAppSettings } from '@/features/location';
 import { EmptyState, Screen } from '@/shared/ui';
 
@@ -159,6 +160,7 @@ export function TodayScreen() {
             {refreshing ? (
               <ActivityIndicator color={theme.colors.accent} />
             ) : null}
+            <FavoriteToggle location={current.location} compact />
             <UnitToggle
               unit={unit}
               disabled={refreshing}

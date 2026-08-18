@@ -2,7 +2,7 @@ import { http } from '@/core/http';
 
 import type { WeatherLocation } from '../model/types';
 import type { GeoPlaceDto } from './dto';
-import { mapGeoPlaceToLocation } from './mappers';
+import { mapGeoPlaceList } from './mappers';
 
 export async function searchPlaces(
   query: string,
@@ -18,7 +18,7 @@ export async function searchPlaces(
     signal: options?.signal,
   });
 
-  return data.map(mapGeoPlaceToLocation);
+  return mapGeoPlaceList(data);
 }
 
 export async function reverseGeocode(
@@ -31,6 +31,6 @@ export async function reverseGeocode(
     signal: options?.signal,
   });
 
-  const place = data[0];
-  return place ? mapGeoPlaceToLocation(place) : null;
+  const places = mapGeoPlaceList(data);
+  return places[0] ?? null;
 }

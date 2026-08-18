@@ -47,7 +47,7 @@ export function MapScreen() {
         <View collapsable={false} style={styles.mapHost}>
           <MapCanvas
             pin={pin}
-            onPick={(lat, lon) => void onPickPlace(lat, lon)}
+            onPick={onPickPlace}
           />
         </View>
 

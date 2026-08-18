@@ -19,15 +19,19 @@ function FavoritesRoute({
   navigation,
 }: BottomTabScreenProps<RootTabParamList, 'Favorites'>) {
   const handleOpen = async (location: WeatherLocation) => {
-    await useWeatherStore.getState().loadWeather({
+    const store = useWeatherStore.getState();
+    await store.loadWeather({
       lat: location.lat,
       lon: location.lon,
       name: location.name,
       force: true,
     });
-    const { status, errorMessage } = useWeatherStore.getState();
+    const { status, errorMessage, current } = useWeatherStore.getState();
     if (status === 'error') {
       throw new Error(errorMessage ?? 'Could not load weather. Try again.');
+    }
+    if (status !== 'ready' && !(status === 'loading' && current)) {
+      throw new Error('Could not open this place.');
     }
     navigation.navigate('Today');
   };

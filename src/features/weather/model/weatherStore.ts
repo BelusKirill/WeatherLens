@@ -10,6 +10,7 @@ import {
 
 import { fetchWeatherBundle } from '../api/weatherApi';
 import { toUserWeatherMessage } from './errorMessage';
+import { shouldApplyDeviceFix } from './selection';
 import type {
   CurrentWeather,
   HourlyPoint,
@@ -27,6 +28,8 @@ type LoadWeatherArgs = {
   name?: string;
   /** Bypass remount dedupe — use for explicit Retry / pull-to-refresh. */
   force?: boolean;
+  /** `user` wins over in-flight GPS bootstrap (map / search / favorites). */
+  source?: 'user' | 'device';
 };
 
 type EmptyReason =
@@ -48,6 +51,8 @@ type WeatherState = {
   errorMessage: string | null;
   emptyMessage: string | null;
   emptyReason: EmptyReason | null;
+  userPickedPlace: boolean;
+  noteUserSelection: () => void;
   setSelectedLocation: (location: WeatherLocation | null) => void;
   setForecast: (current: CurrentWeather, hourly: HourlyPoint[]) => void;
   setLoading: () => void;
@@ -81,6 +86,9 @@ export const useWeatherStore = create<WeatherState>()(
       errorMessage: null,
       emptyMessage: null,
       emptyReason: null,
+      userPickedPlace: false,
+
+      noteUserSelection: () => set({ userPickedPlace: true }),
 
       setSelectedLocation: (selectedLocation) => set({ selectedLocation }),
 
@@ -120,6 +128,7 @@ export const useWeatherStore = create<WeatherState>()(
           current: null,
           hourly: [],
           selectedLocation: null,
+          userPickedPlace: false,
         }),
 
       changeUnit: (unit) => {
@@ -135,7 +144,11 @@ export const useWeatherStore = create<WeatherState>()(
         set({ unit: next });
       },
 
-      loadWeather: async ({ lat, lon, name, force = false }) => {
+      loadWeather: async ({ lat, lon, name, force = false, source = 'user' }) => {
+        if (source === 'user') {
+          get().noteUserSelection();
+        }
+
         const key = weatherRequestKey(lat, lon);
 
         const joined = weatherRequestGate.tryJoin(key);
@@ -199,6 +212,9 @@ export const useWeatherStore = create<WeatherState>()(
         }
 
         const state = get();
+        if (!shouldApplyDeviceFix(state.userPickedPlace)) {
+          return;
+        }
         if (
           !force &&
           state.current &&
@@ -208,21 +224,34 @@ export const useWeatherStore = create<WeatherState>()(
         }
 
         const bootstrap = (async () => {
+          const gpsStillOwns = () => shouldApplyDeviceFix(get().userPickedPlace);
+          if (!gpsStillOwns()) {
+            return;
+          }
+
           get().setLoading();
 
           let result: CurrentPositionResult;
           try {
             result = await getCurrentPosition();
           } catch {
-            get().setEmpty(
-              'Could not read your current position. Try again.',
-              'unavailable',
-            );
+            if (gpsStillOwns()) {
+              get().setEmpty(
+                'Could not read your current position. Try again.',
+                'unavailable',
+              );
+            }
             return;
           }
 
           if (!result.ok) {
-            get().setEmpty(result.message, result.reason);
+            if (gpsStillOwns()) {
+              get().setEmpty(result.message, result.reason);
+            }
+            return;
+          }
+
+          if (!gpsStillOwns()) {
             return;
           }
 
@@ -230,6 +259,7 @@ export const useWeatherStore = create<WeatherState>()(
             lat: result.coords.lat,
             lon: result.coords.lon,
             force,
+            source: 'device',
           });
         })().finally(() => {
           weatherRequestGate.setBootstrap(null);

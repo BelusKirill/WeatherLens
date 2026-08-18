@@ -4,8 +4,6 @@ export const FALLBACK_PIN = {
   title: 'London',
 } as const;
 
-export const DEFAULT_DELTA = 0.12;
-
 export type MapPin = {
   lat: number;
   lon: number;
@@ -19,11 +17,18 @@ export function isSameMapPoint(
   return Math.abs(a.lat - b.lat) < 0.0002 && Math.abs(a.lon - b.lon) < 0.0002;
 }
 
-export function regionFromPin(pin: Pick<MapPin, 'lat' | 'lon'>) {
+/** After a tap/search, keep the pin on the gesture; only refresh the label. */
+export function pinAfterLocationSync(
+  current: MapPin,
+  selected: { lat: number; lon: number; name: string },
+  keepUserPoint: boolean,
+): MapPin {
+  if (keepUserPoint) {
+    return { ...current, title: selected.name };
+  }
   return {
-    latitude: pin.lat,
-    longitude: pin.lon,
-    latitudeDelta: DEFAULT_DELTA,
-    longitudeDelta: DEFAULT_DELTA,
+    lat: selected.lat,
+    lon: selected.lon,
+    title: selected.name,
   };
 }

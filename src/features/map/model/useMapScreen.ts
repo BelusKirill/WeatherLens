@@ -11,7 +11,7 @@ import {
   type WeatherLocation,
 } from '@/features/weather';
 
-import { FALLBACK_PIN, isSameMapPoint, type MapPin } from './camera';
+import { FALLBACK_PIN, pinAfterLocationSync, type MapPin } from './camera';
 import { toUserMapMessage } from './errorMessage';
 
 const SEARCH_DEBOUNCE_MS = 400;
@@ -33,11 +33,12 @@ function pinFromLocation(location: WeatherLocation): MapPin {
 }
 
 export function useMapScreen() {
-  const { selectedLocation, status, loadWeather } = useWeatherStore(
+  const { selectedLocation, status, loadWeather, noteUserSelection } = useWeatherStore(
     useShallow((s) => ({
       selectedLocation: s.selectedLocation,
       status: s.status,
       loadWeather: s.loadWeather,
+      noteUserSelection: s.noteUserSelection,
     })),
   );
 
@@ -55,17 +56,21 @@ export function useMapScreen() {
   const searchAbortRef = useRef<AbortController | null>(null);
   const pinRef = useRef(pin);
   pinRef.current = pin;
+  const requestGenRef = useRef(0);
+  const keepUserPointRef = useRef(false);
+
+  const beginRequest = useCallback(() => {
+    requestGenRef.current += 1;
+    return requestGenRef.current;
+  }, []);
 
   useEffect(() => {
     if (!selectedLocation) {
       return;
     }
-    setPin((current) => {
-      if (isSameMapPoint(current, selectedLocation)) {
-        return { ...current, title: selectedLocation.name };
-      }
-      return pinFromLocation(selectedLocation);
-    });
+    const keepUserPoint = keepUserPointRef.current;
+    keepUserPointRef.current = false;
+    setPin((current) => pinAfterLocationSync(current, selectedLocation, keepUserPoint));
   }, [selectedLocation]);
 
   useEffect(() => {
@@ -95,12 +100,16 @@ export function useMapScreen() {
 
   useEffect(() => {
     return () => {
+      requestGenRef.current += 1;
       reverseAbortRef.current?.abort();
       searchAbortRef.current?.abort();
     };
   }, []);
 
-  const applyWeatherStatus = useCallback(() => {
+  const applyWeatherStatus = useCallback((generation: number) => {
+    if (generation !== requestGenRef.current) {
+      return;
+    }
     const weather = useWeatherStore.getState();
     if (weather.status === 'error') {
       setBanner({
@@ -113,50 +122,59 @@ export function useMapScreen() {
   }, []);
 
   const loadPinWeather = useCallback(
-    async (lat: number, lon: number, name?: string) => {
+    async (lat: number, lon: number, name?: string, generation?: number) => {
+      const gen = generation ?? beginRequest();
       setBanner({ kind: 'info', message: 'Loading weather…' });
       await loadWeather({ lat, lon, name, force: true });
-      applyWeatherStatus();
+      applyWeatherStatus(gen);
     },
-    [applyWeatherStatus, loadWeather],
+    [applyWeatherStatus, beginRequest, loadWeather],
   );
 
   const onPickPlace = useCallback(
     async (lat: number, lon: number) => {
       reverseAbortRef.current?.abort();
+      const gen = beginRequest();
       const controller = new AbortController();
       reverseAbortRef.current = controller;
 
+      noteUserSelection();
+      keepUserPointRef.current = true;
       setPin({ lat, lon, title: 'Selected place' });
       setBanner({ kind: 'info', message: 'Loading weather…' });
 
       let name: string | undefined;
       try {
         const place = await reverseGeocode(lat, lon, { signal: controller.signal });
-        if (controller.signal.aborted) {
+        if (gen !== requestGenRef.current || controller.signal.aborted) {
           return;
         }
         if (place) {
           name = place.name;
+          keepUserPointRef.current = true;
           setPin({ lat, lon, title: place.name });
         }
       } catch (error) {
         if (isCanceledError(error) || controller.signal.aborted) {
+          if (gen === requestGenRef.current) {
+            setBanner({ kind: 'hidden' });
+          }
           return;
         }
       }
 
-      if (controller.signal.aborted) {
+      if (gen !== requestGenRef.current || controller.signal.aborted) {
         return;
       }
 
-      await loadPinWeather(lat, lon, name);
+      await loadPinWeather(lat, lon, name, gen);
     },
-    [loadPinWeather],
+    [beginRequest, loadPinWeather, noteUserSelection],
   );
 
   const retryPinWeather = useCallback(() => {
     const current = pinRef.current;
+    keepUserPointRef.current = true;
     void loadPinWeather(current.lat, current.lon, current.title);
   }, [loadPinWeather]);
 
@@ -164,14 +182,16 @@ export function useMapScreen() {
     (place: WeatherLocation) => {
       Keyboard.dismiss();
       reverseAbortRef.current?.abort();
+      const gen = beginRequest();
       setQuery('');
       setResults([]);
       setSearchStatus('idle');
       setSearchError(null);
+      keepUserPointRef.current = true;
       setPin(pinFromLocation(place));
-      void loadPinWeather(place.lat, place.lon, place.name);
+      void loadPinWeather(place.lat, place.lon, place.name, gen);
     },
-    [loadPinWeather],
+    [beginRequest, loadPinWeather],
   );
 
   const clearSearch = useCallback(() => {

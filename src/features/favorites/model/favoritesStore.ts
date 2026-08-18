@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { WeatherLocation } from '@/features/weather';
 
-import { addFavorite, hasFavorite, isSameLocation, removeFavorite } from './favorites';
+import { addFavorite, hasFavorite, isSameLocation, removeFavorite, sanitizeFavorites } from './favorites';
 
 type FavoritesState = {
   items: WeatherLocation[];
@@ -41,6 +41,14 @@ export const useFavoritesStore = create<FavoritesState>()(
       name: FAVORITES_STORAGE_KEY,
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({ items: state.items }),
+      merge: (persisted, current) => ({
+        ...current,
+        items: sanitizeFavorites(
+          persisted && typeof persisted === 'object'
+            ? (persisted as { items?: unknown }).items
+            : undefined,
+        ),
+      }),
       onRehydrateStorage: () => () => {
         useFavoritesStore.setState({ hasHydrated: true });
       },

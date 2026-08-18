@@ -8,6 +8,7 @@ import {
   hasFavorite,
   isSameLocation,
   removeFavorite,
+  sanitizeFavorites,
 } from './favorites';
 
 const london: WeatherLocation = {
@@ -60,5 +61,13 @@ describe('addFavorite / removeFavorite', () => {
     const withParis = addFavorite([london], paris);
     assert.equal(withParis.length, 2);
     assert.deepEqual(removeFavorite(withParis, paris.id), [london]);
+  });
+});
+
+describe('sanitizeFavorites', () => {
+  it('returns an empty list for non-arrays and drops invalid rows', () => {
+    assert.deepEqual(sanitizeFavorites(null), []);
+    assert.deepEqual(sanitizeFavorites({ items: [london] }), []);
+    assert.deepEqual(sanitizeFavorites([london, { id: 1 }, paris]), [london, paris]);
   });
 });

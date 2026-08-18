@@ -34,3 +34,33 @@ export function removeFavorite(
 ): WeatherLocation[] {
   return items.filter((item) => item.id !== id);
 }
+
+export function sanitizeFavorites(value: unknown): WeatherLocation[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  const items: WeatherLocation[] = [];
+  for (const entry of value) {
+    if (!isPersistedLocation(entry)) {
+      continue;
+    }
+    items.push(entry);
+  }
+  return items;
+}
+
+function isPersistedLocation(value: unknown): value is WeatherLocation {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  const location = value as Record<string, unknown>;
+  return (
+    typeof location.id === 'string' &&
+    typeof location.name === 'string' &&
+    typeof location.lat === 'number' &&
+    Number.isFinite(location.lat) &&
+    typeof location.lon === 'number' &&
+    Number.isFinite(location.lon) &&
+    (location.country === undefined || typeof location.country === 'string')
+  );
+}

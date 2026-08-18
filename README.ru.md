@@ -64,7 +64,7 @@ npm start
 |--------|-----|
 | **Android emulator (primary)** | Запустить AVD, затем `npm start` → `a` (или `npm run android`) |
 | **Physical device** | Expo Go, одна Wi‑Fi с ПК, `npm start` → QR (`npx expo start --tunnel`, если LAN не видит) |
-| **Web (UI shell only)** | `npm run web` — превью навигации/темы; карта и геолокация ограничены |
+| **Web** | `npm run web` — навигация/тема и Leaflet-карта; GPS устройства ограничен |
 | **iOS Simulator** | Нужен macOS — planned |
 
 Expo Fast Refresh обновляет приложение при правках в `src/`.

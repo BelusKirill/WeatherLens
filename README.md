@@ -64,7 +64,7 @@ Requires an [OpenWeather](https://openweathermap.org/api) API key.
 |--------|-----|
 | **Android emulator (primary)** | Start an AVD, then `npm start` → press `a` (or `npm run android`) |
 | **Physical device** | Install Expo Go, same Wi‑Fi as the PC, `npm start` → scan QR (`npx expo start --tunnel` if LAN fails) |
-| **Web (UI shell only)** | `npm run web` — navigation/theme preview; maps and location are limited |
+| **Web** | `npm run web` — navigation/theme plus Leaflet map; device GPS is limited |
 | **iOS Simulator** | Requires macOS — planned |
 
 Expo Fast Refresh updates the app as you edit `src/`.

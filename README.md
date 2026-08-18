@@ -2,16 +2,16 @@
 
 **English** | [Русский](README.ru.md)
 
-Mobile weather app built as a portfolio product: live Today forecast from OpenWeather, geolocation, and a feature-first React Native architecture. Map pin, favorites, compare, and a home-screen widget are on the roadmap.
+Mobile weather app built as a portfolio product: live Today forecast from OpenWeather, geolocation, an interactive map, saved places, and a feature-first React Native architecture. City compare and a home-screen widget are on the roadmap.
 
 ## Highlights
 
 - **Today forecast** — live current conditions, 3-hour strip, °C/°F, loading/error/empty UX
 - **Animated icons** — Lottie states for clear / clouds / rain
 - **Location flow** — permission handling with settings deep link and a demo city fallback
-- **Interactive map** — drag a pin for any coordinates (next)
+- **Interactive map** — tap a place or search a city, reverse geocode, load weather
 - **City compare** — two locations, one screen (planned)
-- **Favorites** — saved places (planned)
+- **Favorites** — saved places persist across restarts
 - **Home-screen widget** — glanceable conditions (planned)
 
 ## Stack
@@ -21,7 +21,7 @@ Mobile weather app built as a portfolio product: live Today forecast from OpenWe
 | App | React Native (Expo) + TypeScript |
 | State | Zustand |
 | Networking | Axios → OpenWeather API |
-| Maps | react-native-maps |
+| Maps | OpenStreetMap via Leaflet |
 | Location | expo-location |
 | Motion | Reanimated + Lottie |
 
@@ -42,9 +42,10 @@ Other language: [docs/ru/](docs/ru/)
 
 - REST clients, async flows, and resilient error/loading UX
 - Geolocation permissions and graceful denial / settings recovery
+- Maps: OpenStreetMap, tap-to-pick pin, reverse geocode, and city search
 - Feature-first architecture that stays easy to extend
 - Cross-platform UI with theming and Lottie motion
-- Product roadmap: map pin, compare, favorites, and widget as differentiators
+- Product roadmap: compare and a home-screen widget as differentiators
 
 ## Getting started
 

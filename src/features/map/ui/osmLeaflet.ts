@@ -33,6 +33,30 @@ export function applyPinScript(lat: number, lon: number, animate: boolean): stri
   return `window.applyPin(${safeLat},${safeLon},${animate ? 'true' : 'false'});true;`;
 }
 
+const ALLOWED_MAP_HOSTS = new Set(['basemaps.cartocdn.com', 'cdn.jsdelivr.net']);
+
+export function isAllowedMapUrl(url: string): boolean {
+  if (
+    !url ||
+    url === 'about:blank' ||
+    url.startsWith('about:srcdoc') ||
+    url.startsWith('data:')
+  ) {
+    return true;
+  }
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') {
+      return false;
+    }
+    const host = parsed.hostname;
+    return ALLOWED_MAP_HOSTS.has(host) || host.endsWith('.basemaps.cartocdn.com');
+  } catch {
+    return false;
+  }
+}
+
 /** Leaflet + OSM/CARTO HTML. Numbers only — never interpolate free text. */
 export function buildOsmLeafletHtml(lat: number, lon: number): string {
   const safeLat = Number(lat.toFixed(6));
@@ -46,8 +70,9 @@ export function buildOsmLeafletHtml(lat: number, lon: number): string {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     html,body,#map{height:100%;margin:0;padding:0;background:#e8eef5}
-    .leaflet-control-attribution{display:none}
     .leaflet-bottom.leaflet-right{bottom:108px;right:10px}
+    .leaflet-bottom.leaflet-left{bottom:108px;left:8px}
+    .leaflet-control-attribution{background:rgba(255,255,255,.72)!important;font-size:10px;margin:0!important}
     .leaflet-control-zoom a{width:36px;height:36px;line-height:36px;font-size:18px}
     .wl-pin{background:none;border:none}
     .wl-pin-body{
@@ -82,8 +107,10 @@ export function buildOsmLeafletHtml(lat: number, lon: number): string {
     var map = L.map('map', { zoomControl: false, attributionControl: false })
       .setView([${safeLat}, ${safeLon}], 12);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
+    L.control.attribution({ position: 'bottomleft', prefix: false }).addTo(map);
     L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
-      maxZoom: 19
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap &copy; CARTO'
     }).addTo(map);
     var pinIcon = L.divIcon({
       className: 'wl-pin',

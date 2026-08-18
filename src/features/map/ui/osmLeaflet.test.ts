@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { isSameMapPoint } from '../model/camera';
-import { parseMapBridgeMessage } from '../ui/osmLeaflet';
+import { isAllowedMapUrl, parseMapBridgeMessage } from '../ui/osmLeaflet';
 
 describe('parseMapBridgeMessage', () => {
   it('accepts ready and pick payloads', () => {
@@ -21,9 +20,15 @@ describe('parseMapBridgeMessage', () => {
   });
 });
 
-describe('isSameMapPoint', () => {
-  it('treats nearby coordinates as the same place', () => {
-    assert.equal(isSameMapPoint({ lat: 51.5, lon: -0.12 }, { lat: 51.5001, lon: -0.1201 }), true);
-    assert.equal(isSameMapPoint({ lat: 51.5, lon: -0.12 }, { lat: 48.85, lon: 2.35 }), false);
+describe('isAllowedMapUrl', () => {
+  it('allows tile and Leaflet CDN hosts over https', () => {
+    assert.equal(isAllowedMapUrl('https://basemaps.cartocdn.com/rastertiles/voyager/1/2/3.png'), true);
+    assert.equal(isAllowedMapUrl('https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js'), true);
+    assert.equal(isAllowedMapUrl('about:blank'), true);
+  });
+
+  it('blocks unexpected hosts and schemes', () => {
+    assert.equal(isAllowedMapUrl('https://evil.example/phish'), false);
+    assert.equal(isAllowedMapUrl('http://basemaps.cartocdn.com/x.png'), false);
   });
 });

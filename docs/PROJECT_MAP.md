@@ -34,11 +34,11 @@ WeatherLens/
 
 | Feature | Responsibility | Public export |
 |---------|----------------|---------------|
-| `weather` | Current/hourly forecast, units, Lottie | `TodayScreen`, `useWeatherStore` |
-| `map` | Map, drag pin, coordinate pick | `MapScreen` |
-| `favorites` | Persist saved places | `FavoritesScreen`, `useFavoritesStore` |
+| `weather` | Current/hourly forecast, units, Lottie, geocoding helpers | `TodayScreen`, `useWeatherStore`, `searchPlaces`, `reverseGeocode` |
+| `map` | Map, tap-to-pick pin, city search (OSM/Leaflet) | `MapScreen` |
+| `favorites` | Persist saved places | `FavoritesScreen`, `FavoriteToggle`, `useFavoritesStore` |
 | `compare` | Two-city comparison | `CompareScreen` |
-| `location` | Geo permissions & current position | `getCurrentPosition`, `openAppSettings` |
+| `location` | Geo permissions & current position | `getCurrentPosition`, `getLastKnownPosition`, `openAppSettings` |
 | `widget` | Home screen widget bridge | Phase 4 |
 
 ## Core

@@ -1,6 +1,7 @@
 export {
   getCurrentPosition,
   getForegroundPermissionStatus,
+  getLastKnownPosition,
   openAppSettings,
   requestForegroundPermissions,
 } from './lib/getCurrentLocation';

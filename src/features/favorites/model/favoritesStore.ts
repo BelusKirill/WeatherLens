@@ -1,22 +1,57 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { WeatherLocation } from '@/features/weather';
 
+import { addFavorite, hasFavorite, isSameLocation, removeFavorite, sanitizeFavorites } from './favorites';
+
 type FavoritesState = {
   items: WeatherLocation[];
+  /** False until AsyncStorage rehydrates persisted `items`. */
+  hasHydrated: boolean;
   add: (location: WeatherLocation) => void;
   remove: (id: string) => void;
+  removeLocation: (location: WeatherLocation) => void;
+  isFavorite: (location: WeatherLocation) => boolean;
 };
 
-export const useFavoritesStore = create<FavoritesState>((set) => ({
-  items: [],
-  add: (location) =>
-    set((state) => {
-      if (state.items.some((item) => item.id === location.id)) {
-        return state;
-      }
-      return { items: [...state.items, location] };
+const FAVORITES_STORAGE_KEY = 'weatherlens.favorites.items';
+
+export const useFavoritesStore = create<FavoritesState>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      hasHydrated: false,
+
+      add: (location) =>
+        set((state) => ({ items: addFavorite(state.items, location) })),
+
+      remove: (id) =>
+        set((state) => ({ items: removeFavorite(state.items, id) })),
+
+      removeLocation: (location) =>
+        set((state) => ({
+          items: state.items.filter((item) => !isSameLocation(item, location)),
+        })),
+
+      isFavorite: (location) => hasFavorite(get().items, location),
     }),
-  remove: (id) =>
-    set((state) => ({ items: state.items.filter((item) => item.id !== id) })),
-}));
+    {
+      name: FAVORITES_STORAGE_KEY,
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({ items: state.items }),
+      merge: (persisted, current) => ({
+        ...current,
+        items: sanitizeFavorites(
+          persisted && typeof persisted === 'object'
+            ? (persisted as { items?: unknown }).items
+            : undefined,
+        ),
+      }),
+      onRehydrateStorage: () => () => {
+        useFavoritesStore.setState({ hasHydrated: true });
+      },
+    },
+  ),
+);

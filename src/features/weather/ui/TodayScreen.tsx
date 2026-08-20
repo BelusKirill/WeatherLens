@@ -9,6 +9,7 @@ import {
 
 import { isApiKeyConfigured } from '@/core/config';
 import { useAppTheme } from '@/core/theme';
+import { FavoriteToggle } from '@/features/favorites';
 import { openAppSettings } from '@/features/location';
 import { EmptyState, Screen } from '@/shared/ui';
 
@@ -159,6 +160,26 @@ export function TodayScreen() {
             {refreshing ? (
               <ActivityIndicator color={theme.colors.accent} />
             ) : null}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="My location"
+              disabled={refreshing}
+              hitSlop={8}
+              onPress={reloadFromDevice}
+              style={[
+                styles.locate,
+                {
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.surface,
+                  opacity: refreshing ? 0.6 : 1,
+                },
+              ]}
+            >
+              <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>
+                My location
+              </Text>
+            </Pressable>
+            <FavoriteToggle location={current.location} compact />
             <UnitToggle
               unit={unit}
               disabled={refreshing}
@@ -234,6 +255,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+  },
+  locate: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   heading: { fontSize: 28, fontWeight: '700' },
   actions: { gap: 10 },

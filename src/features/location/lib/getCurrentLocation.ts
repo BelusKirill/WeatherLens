@@ -77,6 +77,31 @@ export async function getCurrentPosition(): Promise<CurrentPositionResult> {
   }
 }
 
+/**
+ * Cached OS fix without a new GPS wait or permission prompt.
+ * Used by Map for the initial camera when Today has not selected a place yet.
+ */
+export async function getLastKnownPosition(): Promise<Coords | null> {
+  try {
+    const permission = await getForegroundPermissionStatus();
+    if (permission !== 'granted') {
+      return null;
+    }
+
+    const position = await Location.getLastKnownPositionAsync();
+    if (!position) {
+      return null;
+    }
+
+    return {
+      lat: position.coords.latitude,
+      lon: position.coords.longitude,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Opens OS app settings so the user can re-enable a permanently denied permission. */
 export async function openAppSettings(): Promise<void> {
   await Linking.openSettings();

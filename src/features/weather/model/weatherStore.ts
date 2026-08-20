@@ -10,7 +10,6 @@ import {
 
 import { fetchWeatherBundle } from '../api/weatherApi';
 import { toUserWeatherMessage } from './errorMessage';
-import { shouldApplyDeviceFix } from './selection';
 import type {
   CurrentWeather,
   HourlyPoint,
@@ -152,7 +151,7 @@ export const useWeatherStore = create<WeatherState>()(
         const key = weatherRequestKey(lat, lon);
 
         const joined = weatherRequestGate.tryJoin(key);
-        if (joined) {
+        if (joined && !force) {
           return joined;
         }
 
@@ -184,6 +183,11 @@ export const useWeatherStore = create<WeatherState>()(
               return;
             }
 
+            // Late GPS must not overwrite a place the user already picked.
+            if (source === 'device' && get().userPickedPlace) {
+              return;
+            }
+
             const nextCurrent =
               name && current.location.name === 'Selected location'
                 ? {
@@ -206,13 +210,18 @@ export const useWeatherStore = create<WeatherState>()(
       bootstrapFromDevice: async (options) => {
         const force = options?.force ?? false;
 
+        // Explicit "My location" / retry clears a prior map/search/favorite pick.
+        if (force) {
+          set({ userPickedPlace: false });
+        }
+
         const inFlightBootstrap = weatherRequestGate.getBootstrap();
         if (inFlightBootstrap) {
           return inFlightBootstrap;
         }
 
         const state = get();
-        if (!shouldApplyDeviceFix(state.userPickedPlace)) {
+        if (state.userPickedPlace) {
           return;
         }
         if (
@@ -224,18 +233,13 @@ export const useWeatherStore = create<WeatherState>()(
         }
 
         const bootstrap = (async () => {
-          const gpsStillOwns = () => shouldApplyDeviceFix(get().userPickedPlace);
-          if (!gpsStillOwns()) {
-            return;
-          }
-
           get().setLoading();
 
           let result: CurrentPositionResult;
           try {
             result = await getCurrentPosition();
           } catch {
-            if (gpsStillOwns()) {
+            if (!get().userPickedPlace) {
               get().setEmpty(
                 'Could not read your current position. Try again.',
                 'unavailable',
@@ -245,13 +249,13 @@ export const useWeatherStore = create<WeatherState>()(
           }
 
           if (!result.ok) {
-            if (gpsStillOwns()) {
+            if (!get().userPickedPlace) {
               get().setEmpty(result.message, result.reason);
             }
             return;
           }
 
-          if (!gpsStillOwns()) {
+          if (get().userPickedPlace) {
             return;
           }
 

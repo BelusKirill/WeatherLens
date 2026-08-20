@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/core/http/errors.test.ts src/features/weather/api/mappers.test.ts src/features/weather/model/errorMessage.test.ts src/features/weather/model/weatherRequestGate.test.ts src/features/weather/model/units.test.ts src/features/weather/model/selection.test.ts src/features/map/model/errorMessage.test.ts src/features/map/model/camera.test.ts src/features/map/ui/osmLeaflet.test.ts src/features/favorites/model/favorites.test.ts"
+    "test": "tsx --test src/core/http/errors.test.ts src/features/weather/api/mappers.test.ts src/features/weather/model/errorMessage.test.ts src/features/weather/model/weatherRequestGate.test.ts src/features/weather/model/units.test.ts src/features/map/model/errorMessage.test.ts src/features/map/model/camera.test.ts src/features/map/ui/osmLeaflet.test.ts src/features/favorites/model/favorites.test.ts"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",

@@ -70,8 +70,8 @@ export function buildOsmLeafletHtml(lat: number, lon: number): string {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     html,body,#map{height:100%;margin:0;padding:0;background:#e8eef5}
-    .leaflet-bottom.leaflet-right{bottom:108px;right:10px}
-    .leaflet-bottom.leaflet-left{bottom:108px;left:8px}
+    .leaflet-bottom.leaflet-right{bottom:84px;right:10px}
+    .leaflet-bottom.leaflet-left{bottom:84px;left:8px}
     .leaflet-control-attribution{background:rgba(255,255,255,.72)!important;font-size:10px;margin:0!important}
     .leaflet-control-zoom a{width:36px;height:36px;line-height:36px;font-size:18px}
     .wl-pin{background:none;border:none}

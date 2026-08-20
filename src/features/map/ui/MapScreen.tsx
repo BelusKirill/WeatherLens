@@ -1,4 +1,6 @@
+import { useLayoutEffect } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { isApiKeyConfigured } from '@/core/config';
 import { useAppTheme } from '@/core/theme';
@@ -11,6 +13,7 @@ import { MapCanvas } from './MapCanvas';
 
 export function MapScreen() {
   const theme = useAppTheme();
+  const navigation = useNavigation();
   const {
     pin,
     banner,
@@ -27,6 +30,27 @@ export function MapScreen() {
     selectPlace,
     clearSearch,
   } = useMapScreen();
+
+  const locating = banner.kind === 'info';
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="My location"
+          disabled={locating}
+          hitSlop={8}
+          onPress={() => void goToMyLocation()}
+          style={[styles.headerLocate, { opacity: locating ? 0.6 : 1 }]}
+        >
+          <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>
+            My location
+          </Text>
+        </Pressable>
+      ),
+    });
+  }, [goToMyLocation, locating, navigation, theme.colors.accent]);
 
   if (!isApiKeyConfigured()) {
     return (
@@ -84,24 +108,6 @@ export function MapScreen() {
             { backgroundColor: theme.colors.background },
           ]}
         >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="My location"
-            disabled={banner.kind === 'info'}
-            onPress={() => void goToMyLocation()}
-            style={[
-              styles.locate,
-              {
-                borderColor: theme.colors.border,
-                backgroundColor: theme.colors.surface,
-                opacity: banner.kind === 'info' ? 0.6 : 1,
-              },
-            ]}
-          >
-            <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>
-              My location
-            </Text>
-          </Pressable>
           <View
             style={[
               styles.placeBar,
@@ -182,7 +188,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    gap: 8,
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 12,
@@ -211,11 +216,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  locate: {
-    alignSelf: 'flex-end',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
+  headerLocate: {
+    marginRight: 16,
+    paddingVertical: 4,
   },
 });

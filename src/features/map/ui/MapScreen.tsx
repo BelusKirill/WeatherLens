@@ -23,6 +23,7 @@ export function MapScreen() {
     searchError,
     onPickPlace,
     retryPinWeather,
+    goToMyLocation,
     selectPlace,
     clearSearch,
   } = useMapScreen();
@@ -83,6 +84,24 @@ export function MapScreen() {
             { backgroundColor: theme.colors.background },
           ]}
         >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="My location"
+            disabled={banner.kind === 'info'}
+            onPress={() => void goToMyLocation()}
+            style={[
+              styles.locate,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.surface,
+                opacity: banner.kind === 'info' ? 0.6 : 1,
+              },
+            ]}
+          >
+            <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>
+              My location
+            </Text>
+          </Pressable>
           <View
             style={[
               styles.placeBar,
@@ -191,5 +210,12 @@ const styles = StyleSheet.create({
   placeName: {
     fontSize: 16,
     fontWeight: '700',
+  },
+  locate: {
+    alignSelf: 'flex-end',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });

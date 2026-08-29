@@ -2,16 +2,16 @@
 
 [English](../ROADMAP.md) | **Русский**
 
-## Сейчас — Compare & polish
-
-- Side-by-side сравнение городов
-- Доработка light/dark
-- Демо-медиа для портфолио
-
-## Дальше — Widgets & ship
+## Сейчас — Widgets & ship
 
 - Виджет домашнего экрана (iOS / Android)
-- Store-ready ассеты и публичная demo-сборка
+- Финальные скриншоты, store-ready ассеты и публичная demo-сборка
+
+## Сделано — Compare & polish
+
+- Side-by-side сравнение городов с независимой загрузкой
+- Reanimated появление hourly-полоски
+- Предпочтение system / light / dark с persist
 
 ## Сделано — Map & favorites
 

@@ -2,7 +2,7 @@
 
 **English** | [Русский](README.ru.md)
 
-Mobile weather app built as a portfolio product: live Today forecast from OpenWeather, geolocation, an interactive map, saved places, and a feature-first React Native architecture. City compare and a home-screen widget are on the roadmap.
+Mobile weather app built as a portfolio product: live Today forecast from OpenWeather, geolocation, an interactive map, saved places, side-by-side city compare, and a feature-first React Native architecture. A home-screen widget is on the roadmap.
 
 ## Highlights
 
@@ -10,8 +10,9 @@ Mobile weather app built as a portfolio product: live Today forecast from OpenWe
 - **Animated icons** — Lottie states for clear / clouds / rain
 - **Location flow** — permission handling with settings deep link and a demo city fallback
 - **Interactive map** — tap a place or search a city, reverse geocode, load weather
-- **City compare** — two locations, one screen (planned)
+- **City compare** — two independent locations side-by-side without replacing Today
 - **Favorites** — saved places persist across restarts
+- **Light / dark** — system, light, or dark from the settings drawer (gear in the header)
 - **Home-screen widget** — glanceable conditions (planned)
 
 ## Stack
@@ -43,9 +44,10 @@ Other language: [docs/ru/](docs/ru/)
 - REST clients, async flows, and resilient error/loading UX
 - Geolocation permissions and graceful denial / settings recovery
 - Maps: OpenStreetMap, tap-to-pick pin, reverse geocode, and city search
+- Parallel weather loads for side-by-side city compare
 - Feature-first architecture that stays easy to extend
-- Cross-platform UI with theming and Lottie motion
-- Product roadmap: compare and a home-screen widget as differentiators
+- Cross-platform UI with theming, Reanimated, and Lottie motion
+- Product roadmap: home-screen widget as the next differentiator
 
 ## Getting started
 

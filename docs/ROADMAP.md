@@ -2,16 +2,16 @@
 
 **English** | [Русский](ru/ROADMAP.md)
 
-## Now — Compare & polish
-
-- Side-by-side city comparison
-- Light/dark refinement
-- Demo media for portfolio
-
-## Next — Widgets & release
+## Now — Widgets & release
 
 - Home-screen widget (iOS / Android)
-- Store-ready assets and public demo build
+- Final screenshots, store-ready assets, and public demo build
+
+## Shipped — Compare & polish
+
+- Side-by-side city comparison with independent loads
+- Reanimated hourly strip entrance
+- System / light / dark preference with persist
 
 ## Shipped — Map & favorites
 

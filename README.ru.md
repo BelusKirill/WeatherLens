@@ -2,7 +2,7 @@
 
 [English](README.md) | **Русский**
 
-Мобильное приложение погоды как портфолио-продукт: живой экран Today через OpenWeather, геолокация, интерактивная карта, сохранённые места и feature-first архитектура на React Native. Compare городов и виджет домашнего экрана — в roadmap.
+Мобильное приложение погоды как портфолио-продукт: живой экран Today через OpenWeather, геолокация, интерактивная карта, сохранённые места, сравнение городов side-by-side и feature-first архитектура на React Native. Виджет домашнего экрана — в roadmap.
 
 ## Highlights
 
@@ -10,8 +10,9 @@
 - **Animated icons** — Lottie-состояния clear / clouds / rain
 - **Location flow** — permissions, переход в настройки и demo-город как fallback
 - **Interactive map** — тап по месту или поиск города, reverse geocode, загрузка погоды
-- **City compare** — две локации на одном экране (planned)
+- **City compare** — две независимые локации рядом, без замены Today
 - **Favorites** — сохранённые места переживают перезапуск
+- **Light / dark** — system, light или dark из панели настроек (шестерёнка в header)
 - **Home-screen widget** — погода с первого взгляда (planned)
 
 ## Stack
@@ -43,9 +44,10 @@ Other language: [docs/](docs/)
 - REST-клиенты, async-потоки и устойчивый error/loading UX
 - Геолокация, permissions и восстановление через системные настройки
 - Карта: OpenStreetMap, tap-to-pick пин, reverse geocode и поиск города
+- Параллельная загрузка погоды для side-by-side compare
 - Feature-first архитектура, которую легко расширять
-- Кроссплатформенный UI с темой и Lottie-анимацией
-- Продуктовый roadmap: compare и widget как дифференциаторы
+- Кроссплатформенный UI с темой, Reanimated и Lottie
+- Продуктовый roadmap: виджет домашнего экрана как следующий дифференциатор
 
 ## Getting started
 

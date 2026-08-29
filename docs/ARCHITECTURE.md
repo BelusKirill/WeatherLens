@@ -28,7 +28,8 @@ Zustand stores own feature state:
 
 - `weatherStore` — selected location, forecast, units, request status
 - `favoritesStore` — saved locations (persisted)
-- compare selection — in `compare` feature when implemented
+- `compareStore` — two independent weather slots with per-slot request state
+- `themePreferenceStore` — persisted system / light / dark preference
 
 ## Navigation
 

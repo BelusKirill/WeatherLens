@@ -28,7 +28,8 @@ Zustand-сторы владеют состоянием фичи:
 
 - `weatherStore` — выбранная локация, прогноз, единицы, статус запроса
 - `favoritesStore` — сохранённые локации (persist)
-- выбор для compare — в фиче `compare`, когда появится
+- `compareStore` — два независимых слота погоды со своим состоянием запроса
+- `themePreferenceStore` — persist настройки system / light / dark
 
 ## Навигация
 

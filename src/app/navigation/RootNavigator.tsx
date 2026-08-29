@@ -3,7 +3,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { useAppTheme } from '@/core/theme';
 import { CompareScreen } from '@/features/compare';
-import { FavoritesScreen } from '@/features/favorites';
+import {
+  FavoritesScreen,
+  isSameLocation,
+} from '@/features/favorites';
 import { MapScreen } from '@/features/map';
 import {
   TodayScreen,
@@ -11,6 +14,7 @@ import {
   type WeatherLocation,
 } from '@/features/weather';
 
+import { SettingsHeaderButton } from '../settings/SettingsHeaderButton';
 import type { RootTabParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -30,7 +34,11 @@ function FavoritesRoute({
     if (status === 'error') {
       throw new Error(errorMessage ?? 'Could not load weather. Try again.');
     }
-    if (status !== 'ready' && !(status === 'loading' && current)) {
+    if (
+      status !== 'ready' ||
+      !current ||
+      !isSameLocation(current.location, location)
+    ) {
       throw new Error('Could not open this place.');
     }
     navigation.navigate('Today');
@@ -47,6 +55,7 @@ export function RootNavigator() {
       screenOptions={{
         headerStyle: { backgroundColor: theme.colors.surface },
         headerTintColor: theme.colors.text,
+        headerRight: () => <SettingsHeaderButton />,
         tabBarStyle: { backgroundColor: theme.colors.surface },
         tabBarActiveTintColor: theme.colors.accent,
         tabBarInactiveTintColor: theme.colors.textMuted,

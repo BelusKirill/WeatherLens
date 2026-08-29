@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/core/http/errors.test.ts src/features/weather/api/mappers.test.ts src/features/weather/model/errorMessage.test.ts src/features/weather/model/weatherRequestGate.test.ts src/features/weather/model/units.test.ts src/features/map/model/errorMessage.test.ts src/features/map/model/camera.test.ts src/features/map/ui/osmLeaflet.test.ts src/features/favorites/model/favorites.test.ts"
+    "test": "tsx --test src/core/http/errors.test.ts src/core/theme/themePreference.test.ts src/features/weather/api/mappers.test.ts src/features/weather/model/errorMessage.test.ts src/features/weather/model/weatherRequestGate.test.ts src/features/weather/model/units.test.ts src/features/map/model/errorMessage.test.ts src/features/map/model/camera.test.ts src/features/map/ui/osmLeaflet.test.ts src/features/favorites/model/favorites.test.ts src/features/compare/model/compareStore.test.ts"
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
@@ -41,6 +41,8 @@
     "@babel/core": "^7.26.0",
     "@types/react": "~18.3.12",
     "babel-plugin-module-resolver": "^5.0.2",
+    "eslint": "^8.57.0",
+    "eslint-config-expo": "~8.0.1",
     "tsx": "^4.19.3",
     "typescript": "~5.3.3"
   }

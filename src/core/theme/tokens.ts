@@ -33,12 +33,12 @@ export const lightTheme: AppTheme = {
 export const darkTheme: AppTheme = {
   colors: {
     background: '#071421',
-    surface: '#0B1F33',
+    surface: '#0D2438',
     text: '#E8EEF5',
-    textMuted: '#9AA8B5',
+    textMuted: '#A8B6C4',
     accent: '#6AA8FF',
     danger: '#EF9A9A',
-    border: '#1C334A',
+    border: '#2F4D68',
   },
   spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
 };

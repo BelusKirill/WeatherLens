@@ -127,8 +127,8 @@ export function TodayScreen() {
       <Screen>
         <View style={styles.centered}>
           <EmptyState
-            title="Today"
-            subtitle="No weather data yet. Allow location or try the demo city."
+            title="No weather data"
+            subtitle="Allow location access or try the demo city."
           />
           <ActionList
             actions={[
@@ -153,9 +153,6 @@ export function TodayScreen() {
         ]}
       >
         <View style={styles.toolbar}>
-          <Text style={[styles.heading, { color: theme.colors.text }]}>
-            Today
-          </Text>
           <View style={styles.toolbarRight}>
             {refreshing ? (
               <ActivityIndicator color={theme.colors.accent} />
@@ -249,7 +246,7 @@ const styles = StyleSheet.create({
   toolbar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   toolbarRight: {
     flexDirection: 'row',
@@ -262,7 +259,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
   },
-  heading: { fontSize: 28, fontWeight: '700' },
   actions: { gap: 10 },
   button: {
     alignItems: 'center',

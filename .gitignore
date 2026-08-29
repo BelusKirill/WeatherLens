@@ -48,6 +48,9 @@ Thumbs.db
 coverage/
 .jest/
 
+# Local portfolio captures (replace with final media before public release)
+docs/media/
+
 # TypeScript
 *.tsbuildinfo
 

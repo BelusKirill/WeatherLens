@@ -7,7 +7,7 @@ import { isCanceledError } from '@/core/http/errors';
 import { getLastKnownPosition } from '@/features/location';
 import {
   reverseGeocode,
-  searchPlaces,
+  usePlaceSearch,
   useWeatherStore,
   type WeatherLocation,
 } from '@/features/weather';
@@ -15,15 +15,10 @@ import {
 import { FALLBACK_PIN, type MapPin } from './camera';
 import { toUserMapMessage } from './errorMessage';
 
-const SEARCH_DEBOUNCE_MS = 400;
-const SEARCH_MIN_LENGTH = 2;
-
 export type MapBanner =
   | { kind: 'hidden' }
   | { kind: 'info'; message: string }
   | { kind: 'error'; message: string };
-
-export type PlaceSearchStatus = 'idle' | 'loading' | 'empty' | 'error';
 
 function pinFromLocation(location: WeatherLocation): MapPin {
   return {
@@ -50,13 +45,12 @@ export function useMapScreen() {
   );
   const [banner, setBanner] = useState<MapBanner>({ kind: 'hidden' });
 
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<WeatherLocation[]>([]);
-  const [searchStatus, setSearchStatus] = useState<PlaceSearchStatus>('idle');
-  const [searchError, setSearchError] = useState<string | null>(null);
+  const placeSearch = usePlaceSearch({
+    debounceMs: 400,
+    mapError: (error) => toUserMapMessage(error, 'search'),
+  });
 
   const reverseAbortRef = useRef<AbortController | null>(null);
-  const searchAbortRef = useRef<AbortController | null>(null);
   const pinRef = useRef(pin);
   pinRef.current = pin;
   const requestGenRef = useRef(0);
@@ -66,7 +60,6 @@ export function useMapScreen() {
     return requestGenRef.current;
   }
 
-  // Sync pin from store when opening the Map tab (favorites / Today), not on every forecast write.
   useFocusEffect(
     useCallback(() => {
       const location = useWeatherStore.getState().selectedLocation;
@@ -105,7 +98,6 @@ export function useMapScreen() {
     return () => {
       requestGenRef.current += 1;
       reverseAbortRef.current?.abort();
-      searchAbortRef.current?.abort();
     };
   }, []);
 
@@ -205,84 +197,27 @@ export function useMapScreen() {
       Keyboard.dismiss();
       reverseAbortRef.current?.abort();
       const gen = beginRequest();
-      setQuery('');
-      setResults([]);
-      setSearchStatus('idle');
-      setSearchError(null);
+      placeSearch.clear();
       setPin(pinFromLocation(place));
       void loadPinWeather(place.lat, place.lon, place.name, gen);
     },
-    [loadPinWeather],
+    [loadPinWeather, placeSearch.clear],
   );
-
-  const clearSearch = useCallback(() => {
-    searchAbortRef.current?.abort();
-    setQuery('');
-    setResults([]);
-    setSearchStatus('idle');
-    setSearchError(null);
-  }, []);
-
-  useEffect(() => {
-    const trimmed = query.trim();
-    if (trimmed.length < SEARCH_MIN_LENGTH) {
-      searchAbortRef.current?.abort();
-      setResults([]);
-      setSearchStatus('idle');
-      setSearchError(null);
-      return;
-    }
-
-    const controller = new AbortController();
-    searchAbortRef.current?.abort();
-    searchAbortRef.current = controller;
-
-    const timer = setTimeout(() => {
-      setSearchStatus('loading');
-      setSearchError(null);
-      setResults([]);
-      void (async () => {
-        try {
-          const places = await searchPlaces(trimmed, {
-            limit: 5,
-            signal: controller.signal,
-          });
-          if (controller.signal.aborted) {
-            return;
-          }
-          setResults(places);
-          setSearchStatus(places.length === 0 ? 'empty' : 'idle');
-        } catch (error) {
-          if (isCanceledError(error) || controller.signal.aborted) {
-            return;
-          }
-          setResults([]);
-          setSearchStatus('error');
-          setSearchError(toUserMapMessage(error, 'search'));
-        }
-      })();
-    }, SEARCH_DEBOUNCE_MS);
-
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [query]);
 
   return {
     pin,
     banner,
     selectedLocation,
     weatherStatus: status,
-    query,
-    setQuery,
-    results,
-    searchStatus,
-    searchError,
+    query: placeSearch.query,
+    setQuery: placeSearch.setQuery,
+    results: placeSearch.results,
+    searchStatus: placeSearch.status,
+    searchError: placeSearch.errorMessage,
     onPickPlace,
     retryPinWeather,
     goToMyLocation,
     selectPlace,
-    clearSearch,
+    clearSearch: placeSearch.clear,
   };
 }

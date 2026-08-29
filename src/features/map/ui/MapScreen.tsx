@@ -1,6 +1,4 @@
-import { useLayoutEffect } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
 import { isApiKeyConfigured } from '@/core/config';
 import { useAppTheme } from '@/core/theme';
@@ -13,7 +11,6 @@ import { MapCanvas } from './MapCanvas';
 
 export function MapScreen() {
   const theme = useAppTheme();
-  const navigation = useNavigation();
   const {
     pin,
     banner,
@@ -33,25 +30,6 @@ export function MapScreen() {
 
   const locating = banner.kind === 'info';
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="My location"
-          disabled={locating}
-          hitSlop={8}
-          onPress={() => void goToMyLocation()}
-          style={[styles.headerLocate, { opacity: locating ? 0.6 : 1 }]}
-        >
-          <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>
-            My location
-          </Text>
-        </Pressable>
-      ),
-    });
-  }, [goToMyLocation, locating, navigation, theme.colors.accent]);
-
   if (!isApiKeyConfigured()) {
     return (
       <Screen>
@@ -70,10 +48,7 @@ export function MapScreen() {
     <Screen padded={false}>
       <View style={styles.root}>
         <View collapsable={false} style={styles.mapHost}>
-          <MapCanvas
-            pin={pin}
-            onPick={onPickPlace}
-          />
+          <MapCanvas pin={pin} onPick={onPickPlace} />
         </View>
 
         <View
@@ -89,17 +64,42 @@ export function MapScreen() {
             onSelect={selectPlace}
             onClear={clearSearch}
           />
-          <Text
-            style={[
-              styles.hint,
-              {
-                color: theme.colors.textMuted,
-                backgroundColor: theme.colors.background,
-              },
-            ]}
-          >
-            Tap the map to load weather for that place
-          </Text>
+          <View style={styles.hintRow}>
+            <View
+              style={[
+                styles.hintChip,
+                {
+                  backgroundColor: theme.colors.background,
+                  borderColor: theme.colors.border,
+                },
+              ]}
+            >
+              <Text
+                style={[styles.hintText, { color: theme.colors.textMuted }]}
+                numberOfLines={2}
+              >
+                Tap the map to load weather for that place
+              </Text>
+            </View>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="My location"
+              disabled={locating}
+              onPress={() => void goToMyLocation()}
+              style={[
+                styles.locateButton,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderColor: theme.colors.border,
+                  opacity: locating ? 0.6 : 1,
+                },
+              ]}
+            >
+              <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>
+                My location
+              </Text>
+            </Pressable>
+          </View>
         </View>
 
         <View
@@ -114,7 +114,9 @@ export function MapScreen() {
               {
                 backgroundColor: theme.colors.surface,
                 borderColor:
-                  banner.kind === 'error' ? theme.colors.danger : theme.colors.border,
+                  banner.kind === 'error'
+                    ? theme.colors.danger
+                    : theme.colors.border,
               },
             ]}
           >
@@ -146,7 +148,9 @@ export function MapScreen() {
                     hitSlop={8}
                     onPress={() => void retryPinWeather()}
                   >
-                    <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>
+                    <Text
+                      style={{ color: theme.colors.accent, fontWeight: '600' }}
+                    >
                       Retry
                     </Text>
                   </Pressable>
@@ -175,13 +179,29 @@ const styles = StyleSheet.create({
     right: 0,
     gap: 8,
   },
-  hint: {
-    alignSelf: 'flex-start',
+  hintRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  hintChip: {
+    flex: 1,
+    minWidth: 0,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  hintText: {
     fontSize: 13,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 10,
-    overflow: 'hidden',
+    lineHeight: 18,
+  },
+  locateButton: {
+    flexShrink: 0,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   bottomSheet: {
     position: 'absolute',
@@ -215,9 +235,5 @@ const styles = StyleSheet.create({
   placeName: {
     fontSize: 16,
     fontWeight: '700',
-  },
-  headerLocate: {
-    marginRight: 16,
-    paddingVertical: 4,
   },
 });

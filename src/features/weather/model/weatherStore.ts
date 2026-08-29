@@ -46,13 +46,16 @@ type WeatherState = {
   selectedLocation: WeatherLocation | null;
   current: CurrentWeather | null;
   hourly: HourlyPoint[];
+  /**
+   * Status describes the latest operation while current may contain stale,
+   * still-displayable data during loading/error.
+   */
   status: 'idle' | 'loading' | 'ready' | 'error' | 'empty';
   errorMessage: string | null;
   emptyMessage: string | null;
   emptyReason: EmptyReason | null;
   userPickedPlace: boolean;
   noteUserSelection: () => void;
-  setSelectedLocation: (location: WeatherLocation | null) => void;
   setForecast: (current: CurrentWeather, hourly: HourlyPoint[]) => void;
   setLoading: () => void;
   setError: (message: string) => void;
@@ -73,6 +76,15 @@ const DEMO_LOCATION = {
 
 const UNIT_STORAGE_KEY = 'weatherlens.weather.unit';
 
+function settleSuppressedDeviceLoad(hasCurrent: boolean) {
+  return {
+    status: hasCurrent ? ('ready' as const) : ('idle' as const),
+    errorMessage: null,
+    emptyMessage: null,
+    emptyReason: null,
+  };
+}
+
 export const useWeatherStore = create<WeatherState>()(
   persist(
     (set, get) => ({
@@ -88,8 +100,6 @@ export const useWeatherStore = create<WeatherState>()(
       userPickedPlace: false,
 
       noteUserSelection: () => set({ userPickedPlace: true }),
-
-      setSelectedLocation: (selectedLocation) => set({ selectedLocation }),
 
       setForecast: (current, hourly) =>
         set({
@@ -167,9 +177,7 @@ export const useWeatherStore = create<WeatherState>()(
         }
 
         return weatherRequestGate.begin(key, async (signal) => {
-          if (get().status !== 'loading') {
-            get().setLoading();
-          }
+          get().setLoading();
 
           try {
             const { current, hourly } = await fetchWeatherBundle({
@@ -185,6 +193,7 @@ export const useWeatherStore = create<WeatherState>()(
 
             // Late GPS must not overwrite a place the user already picked.
             if (source === 'device' && get().userPickedPlace) {
+              set(settleSuppressedDeviceLoad(Boolean(get().current)));
               return;
             }
 
@@ -239,7 +248,9 @@ export const useWeatherStore = create<WeatherState>()(
           try {
             result = await getCurrentPosition();
           } catch {
-            if (!get().userPickedPlace) {
+            if (get().userPickedPlace) {
+              set(settleSuppressedDeviceLoad(Boolean(get().current)));
+            } else {
               get().setEmpty(
                 'Could not read your current position. Try again.',
                 'unavailable',
@@ -248,14 +259,13 @@ export const useWeatherStore = create<WeatherState>()(
             return;
           }
 
-          if (!result.ok) {
-            if (!get().userPickedPlace) {
-              get().setEmpty(result.message, result.reason);
-            }
+          if (get().userPickedPlace) {
+            set(settleSuppressedDeviceLoad(Boolean(get().current)));
             return;
           }
 
-          if (get().userPickedPlace) {
+          if (!result.ok) {
+            get().setEmpty(result.message, result.reason);
             return;
           }
 

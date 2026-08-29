@@ -8,9 +8,7 @@ import {
 } from 'react-native';
 
 import { useAppTheme } from '@/core/theme';
-import type { WeatherLocation } from '@/features/weather';
-
-import type { PlaceSearchStatus } from '../model/useMapScreen';
+import type { PlaceSearchStatus, WeatherLocation } from '@/features/weather';
 
 type CitySearchProps = {
   query: string;

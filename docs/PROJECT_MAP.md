@@ -34,11 +34,11 @@ WeatherLens/
 
 | Feature | Responsibility | Public export |
 |---------|----------------|---------------|
-| `weather` | Current/hourly forecast, units, Lottie | `TodayScreen`, `useWeatherStore` |
-| `map` | Map, drag pin, coordinate pick | `MapScreen` |
-| `favorites` | Persist saved places | `FavoritesScreen`, `useFavoritesStore` |
-| `compare` | Two-city comparison | `CompareScreen` |
-| `location` | Geo permissions & current position | `getCurrentPosition`, `openAppSettings` |
+| `weather` | Current/hourly forecast, units, Lottie, geocoding helpers, `fetchWeatherBundle`, `usePlaceSearch` | `TodayScreen`, `HourlyStrip`, `WeatherIcon`, `useWeatherStore`, `usePlaceSearch`, `searchPlaces`, `reverseGeocode`, `fetchWeatherBundle` |
+| `map` | Map, tap-to-pick pin, city search (OSM/Leaflet) | `MapScreen` |
+| `favorites` | Persist saved places | `FavoritesScreen`, `FavoriteToggle`, `useFavoritesStore`, `isSameLocation` |
+| `compare` | Two independent weather slots (A/B) with lifecycle-safe state machine | `CompareScreen` |
+| `location` | Geo permissions & current position | `getCurrentPosition`, `getLastKnownPosition`, `openAppSettings` |
 | `widget` | Home screen widget bridge | Phase 4 |
 
 ## Core
@@ -47,7 +47,8 @@ WeatherLens/
 |--------|------|
 | `core/config` | Env / API key access |
 | `core/http` | Axios client + normalized errors |
-| `core/theme` | Light/dark tokens + provider |
+| `core/theme` | Light/dark tokens, preference store, `ThemeModeToggle` |
+| `app/settings` | Header gear (right) + Appearance drawer sliding in from the right |
 
 ## Conventions
 

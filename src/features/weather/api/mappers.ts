@@ -17,6 +17,28 @@ export function mapGeoPlaceToLocation(place: GeoPlaceDto): WeatherLocation {
   };
 }
 
+function isGeoPlaceDto(value: unknown): value is GeoPlaceDto {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  const place = value as Record<string, unknown>;
+  return (
+    typeof place.name === 'string' &&
+    typeof place.lat === 'number' &&
+    Number.isFinite(place.lat) &&
+    typeof place.lon === 'number' &&
+    Number.isFinite(place.lon)
+  );
+}
+
+/** Accepts unknown JSON so a non-array payload cannot crash the UI. */
+export function mapGeoPlaceList(data: unknown): WeatherLocation[] {
+  if (!Array.isArray(data)) {
+    return [];
+  }
+  return data.filter(isGeoPlaceDto).map(mapGeoPlaceToLocation);
+}
+
 export function mapCurrentWeatherDto(
   dto: CurrentWeatherDto,
   fallbackName?: string,

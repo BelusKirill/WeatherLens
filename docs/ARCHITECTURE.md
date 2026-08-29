@@ -27,8 +27,9 @@ Domain types live in `feature/model`. API DTOs stay in `api/` or mappers and are
 Zustand stores own feature state:
 
 - `weatherStore` — selected location, forecast, units, request status
-- `favoritesStore` — saved locations (to be persisted)
-- compare selection — in `compare` feature when implemented
+- `favoritesStore` — saved locations (persisted)
+- `compareStore` — two independent weather slots with per-slot request state
+- `themePreferenceStore` — persisted system / light / dark preference
 
 ## Navigation
 

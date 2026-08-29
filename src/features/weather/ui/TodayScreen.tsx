@@ -9,6 +9,7 @@ import {
 
 import { isApiKeyConfigured } from '@/core/config';
 import { useAppTheme } from '@/core/theme';
+import { FavoriteToggle } from '@/features/favorites';
 import { openAppSettings } from '@/features/location';
 import { EmptyState, Screen } from '@/shared/ui';
 
@@ -126,8 +127,8 @@ export function TodayScreen() {
       <Screen>
         <View style={styles.centered}>
           <EmptyState
-            title="Today"
-            subtitle="No weather data yet. Allow location or try the demo city."
+            title="No weather data"
+            subtitle="Allow location access or try the demo city."
           />
           <ActionList
             actions={[
@@ -152,13 +153,30 @@ export function TodayScreen() {
         ]}
       >
         <View style={styles.toolbar}>
-          <Text style={[styles.heading, { color: theme.colors.text }]}>
-            Today
-          </Text>
           <View style={styles.toolbarRight}>
             {refreshing ? (
               <ActivityIndicator color={theme.colors.accent} />
             ) : null}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="My location"
+              disabled={refreshing}
+              hitSlop={8}
+              onPress={reloadFromDevice}
+              style={[
+                styles.locate,
+                {
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.surface,
+                  opacity: refreshing ? 0.6 : 1,
+                },
+              ]}
+            >
+              <Text style={{ color: theme.colors.accent, fontWeight: '600' }}>
+                My location
+              </Text>
+            </Pressable>
+            <FavoriteToggle location={current.location} compact />
             <UnitToggle
               unit={unit}
               disabled={refreshing}
@@ -228,14 +246,19 @@ const styles = StyleSheet.create({
   toolbar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   toolbarRight: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
   },
-  heading: { fontSize: 28, fontWeight: '700' },
+  locate: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   actions: { gap: 10 },
   button: {
     alignItems: 'center',

@@ -27,8 +27,9 @@ Domain-типы живут в `feature/model`. DTO API остаются в `api/
 Zustand-сторы владеют состоянием фичи:
 
 - `weatherStore` — выбранная локация, прогноз, единицы, статус запроса
-- `favoritesStore` — сохранённые локации (будет persist)
-- выбор для compare — в фиче `compare`, когда появится
+- `favoritesStore` — сохранённые локации (persist)
+- `compareStore` — два независимых слота погоды со своим состоянием запроса
+- `themePreferenceStore` — persist настройки system / light / dark
 
 ## Навигация
 

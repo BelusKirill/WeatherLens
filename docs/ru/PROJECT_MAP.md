@@ -34,11 +34,11 @@ WeatherLens/
 
 | Фича | Ответственность | Публичный экспорт |
 |------|-----------------|-------------------|
-| `weather` | Текущий/почасовой прогноз, единицы, Lottie | `TodayScreen`, `useWeatherStore` |
-| `map` | Карта, drag pin, выбор координат | `MapScreen` |
-| `favorites` | Persist сохранённых мест | `FavoritesScreen`, `useFavoritesStore` |
-| `compare` | Сравнение двух городов | `CompareScreen` |
-| `location` | Geo permissions и текущая позиция | `getCurrentPosition`, `openAppSettings` |
+| `weather` | Текущий/почасовой прогноз, единицы, Lottie, геокодинг, `fetchWeatherBundle`, `usePlaceSearch` | `TodayScreen`, `HourlyStrip`, `WeatherIcon`, `useWeatherStore`, `usePlaceSearch`, `searchPlaces`, `reverseGeocode`, `fetchWeatherBundle` |
+| `map` | Карта, tap-to-pick пин, поиск города (OSM/Leaflet) | `MapScreen` |
+| `favorites` | Persist сохранённых мест | `FavoritesScreen`, `FavoriteToggle`, `useFavoritesStore`, `isSameLocation` |
+| `compare` | Два независимых слота погоды (A/B) с lifecycle-safe state machine | `CompareScreen` |
+| `location` | Geo permissions и текущая позиция | `getCurrentPosition`, `getLastKnownPosition`, `openAppSettings` |
 | `widget` | Мост к виджету home screen | Phase 4 |
 
 ## Core
@@ -47,7 +47,8 @@ WeatherLens/
 |--------|------|
 | `core/config` | Env / доступ к API-ключу |
 | `core/http` | Axios-клиент + нормализованные ошибки |
-| `core/theme` | Токены light/dark + provider |
+| `core/theme` | Токены light/dark, preference store, `ThemeModeToggle` |
+| `app/settings` | Шестерёнка справа в header + выезжающая панель Appearance |
 
 ## Соглашения
 

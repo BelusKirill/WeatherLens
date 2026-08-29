@@ -2,22 +2,22 @@
 
 **English** | [Русский](ru/ROADMAP.md)
 
-## Now — Map & favorites
-
-- `react-native-maps` with draggable pin
-- Reverse geocode + city search
-- Persist favorites
-
-## Next — Compare & polish
-
-- Side-by-side city comparison
-- Light/dark refinement
-- Demo media for portfolio
-
-## Then — Widgets & release
+## Now — Widgets & release
 
 - Home-screen widget (iOS / Android)
-- Store-ready assets and public demo build
+- Final screenshots, store-ready assets, and public demo build
+
+## Shipped — Compare & polish
+
+- Side-by-side city comparison with independent loads
+- Reanimated hourly strip entrance
+- System / light / dark preference with persist
+
+## Shipped — Map & favorites
+
+- Interactive map with tap-to-pick pin
+- Reverse geocode + city search
+- Persist favorites and open them on Today
 
 ## Shipped — Weather core
 

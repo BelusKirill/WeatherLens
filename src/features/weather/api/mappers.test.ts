@@ -6,6 +6,7 @@ import {
   locationId,
   mapCurrentWeatherDto,
   mapForecastDto,
+  mapGeoPlaceList,
   mapGeoPlaceToLocation,
 } from './mappers';
 
@@ -77,5 +78,21 @@ describe('mapGeoPlaceToLocation', () => {
     assert.equal(location.id, locationId(30.2672, -97.7431));
     assert.equal(location.name, 'Austin, Texas');
     assert.equal(location.country, 'US');
+  });
+});
+
+describe('mapGeoPlaceList', () => {
+  it('returns an empty list when the payload is not an array', () => {
+    assert.deepEqual(mapGeoPlaceList({ message: 'bad' }), []);
+    assert.deepEqual(mapGeoPlaceList(null), []);
+  });
+
+  it('skips malformed rows', () => {
+    const places = mapGeoPlaceList([
+      { name: 'Austin', lat: 30.2672, lon: -97.7431, country: 'US' },
+      { name: 'Nope' },
+    ]);
+    assert.equal(places.length, 1);
+    assert.equal(places[0]?.name, 'Austin');
   });
 });

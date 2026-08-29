@@ -2,16 +2,17 @@
 
 **English** | [Русский](README.ru.md)
 
-Mobile weather app built as a portfolio product: live Today forecast from OpenWeather, geolocation, and a feature-first React Native architecture. Map pin, favorites, compare, and a home-screen widget are on the roadmap.
+Mobile weather app built as a portfolio product: live Today forecast from OpenWeather, geolocation, an interactive map, saved places, side-by-side city compare, and a feature-first React Native architecture. A home-screen widget is on the roadmap.
 
 ## Highlights
 
 - **Today forecast** — live current conditions, 3-hour strip, °C/°F, loading/error/empty UX
 - **Animated icons** — Lottie states for clear / clouds / rain
 - **Location flow** — permission handling with settings deep link and a demo city fallback
-- **Interactive map** — drag a pin for any coordinates (next)
-- **City compare** — two locations, one screen (planned)
-- **Favorites** — saved places (planned)
+- **Interactive map** — tap a place or search a city, reverse geocode, load weather
+- **City compare** — two independent locations side-by-side without replacing Today
+- **Favorites** — saved places persist across restarts
+- **Light / dark** — system, light, or dark from the settings drawer (gear in the header)
 - **Home-screen widget** — glanceable conditions (planned)
 
 ## Stack
@@ -21,7 +22,7 @@ Mobile weather app built as a portfolio product: live Today forecast from OpenWe
 | App | React Native (Expo) + TypeScript |
 | State | Zustand |
 | Networking | Axios → OpenWeather API |
-| Maps | react-native-maps |
+| Maps | OpenStreetMap via Leaflet |
 | Location | expo-location |
 | Motion | Reanimated + Lottie |
 
@@ -42,9 +43,11 @@ Other language: [docs/ru/](docs/ru/)
 
 - REST clients, async flows, and resilient error/loading UX
 - Geolocation permissions and graceful denial / settings recovery
+- Maps: OpenStreetMap, tap-to-pick pin, reverse geocode, and city search
+- Parallel weather loads for side-by-side city compare
 - Feature-first architecture that stays easy to extend
-- Cross-platform UI with theming and Lottie motion
-- Product roadmap: map pin, compare, favorites, and widget as differentiators
+- Cross-platform UI with theming, Reanimated, and Lottie motion
+- Product roadmap: home-screen widget as the next differentiator
 
 ## Getting started
 
@@ -63,7 +66,7 @@ Requires an [OpenWeather](https://openweathermap.org/api) API key.
 |--------|-----|
 | **Android emulator (primary)** | Start an AVD, then `npm start` → press `a` (or `npm run android`) |
 | **Physical device** | Install Expo Go, same Wi‑Fi as the PC, `npm start` → scan QR (`npx expo start --tunnel` if LAN fails) |
-| **Web (UI shell only)** | `npm run web` — navigation/theme preview; maps and location are limited |
+| **Web** | `npm run web` — navigation/theme plus Leaflet map; device GPS is limited |
 | **iOS Simulator** | Requires macOS — planned |
 
 Expo Fast Refresh updates the app as you edit `src/`.
